@@ -5,6 +5,11 @@ import { useState, useEffect } from 'react';
 import { auth } from '@/lib/firebaseClient';
 import { getUserExpenses, getUserFinancialGoals } from '@/lib/firestoreService';
 import ExpenseTracker from '../expenses/ExpenseTracker';
+import InvestmentTracker from '../investments/InvestmentTracker';
+import BudgetTracker from '../budget/BudgetTracker';
+import FinancialHealthDashboard from '../health/FinancialHealthDashboard';
+import FinancialGoals from '../goals/FinancialGoals';
+import AIInsightsPanel from './AIInsightsPanel';
 
 interface DashboardStats {
   totalExpenses: number;
@@ -24,7 +29,7 @@ interface RecentActivity {
 }
 
 export default function Dashboard() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'expenses' | 'investments' | 'goals'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'expenses' | 'investments' | 'goals' | 'budgets' | 'health' | 'ai'>('overview');
   const [stats, setStats] = useState<DashboardStats>({
     totalExpenses: 0,
     monthlyExpenses: 0,
@@ -111,7 +116,10 @@ export default function Dashboard() {
     { id: 'overview', label: 'Overview', icon: '📊' },
     { id: 'expenses', label: 'Expenses', icon: '💰' },
     { id: 'investments', label: 'Investments', icon: '📈' },
-    { id: 'goals', label: 'Goals', icon: '🎯' }
+    { id: 'goals', label: 'Goals', icon: '🎯' },
+    { id: 'budgets', label: 'Budgets', icon: '📝' },
+    { id: 'health', label: 'Health', icon: '💚' },
+    { id: 'ai', label: 'AI Insights', icon: '🤖' },
   ];
 
   if (loading) {
@@ -358,27 +366,23 @@ export default function Dashboard() {
         {activeTab === 'expenses' && <ExpenseTracker onExpenseAdded={refreshDashboard} />}
         
         {activeTab === 'investments' && (
-          <div className="text-center py-16">
-            <h2 className="text-2xl font-bold mb-4">Investment Tracking</h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-8">
-              Track your portfolio, monitor performance, and get AI-powered investment recommendations.
-            </p>
-            <div className="bg-yellow-100 dark:bg-yellow-900/20 p-4 rounded-lg inline-block">
-              <span className="text-yellow-800 dark:text-yellow-200">🚧 Coming Soon! Investment tracking features are under development.</span>
-            </div>
-          </div>
+          <InvestmentTracker onInvestmentAdded={refreshDashboard} />
         )}
         
         {activeTab === 'goals' && (
-          <div className="text-center py-16">
-            <h2 className="text-2xl font-bold mb-4">Financial Goals</h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-8">
-              Set and track your financial goals with intelligent progress monitoring.
-            </p>
-            <div className="bg-yellow-100 dark:bg-yellow-900/20 p-4 rounded-lg inline-block">
-              <span className="text-yellow-800 dark:text-yellow-200">🚧 Coming Soon! Goal tracking features are under development.</span>
-            </div>
-          </div>
+          <FinancialGoals onGoalAdded={refreshDashboard} />
+        )}
+
+        {activeTab === 'budgets' && (
+          <BudgetTracker onBudgetAdded={refreshDashboard} />
+        )}
+
+        {activeTab === 'health' && (
+          <FinancialHealthDashboard />
+        )}
+
+        {activeTab === 'ai' && (
+          <AIInsightsPanel />
         )}
       </div>
     </div>

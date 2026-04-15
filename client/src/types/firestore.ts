@@ -5,12 +5,12 @@ export interface User {
   displayName?: string;
   createdAt: Date;
   updatedAt: Date;
-  financialProfile?: {
-    monthlyIncome?: number;
-    riskTolerance: 'low' | 'medium' | 'high';
-    investmentGoals: string[];
-    age?: number;
-  };
+  monthlyIncome?: number;
+  riskTolerance?: 'low' | 'medium' | 'high';
+  investmentGoals?: string[];
+  age?: number;
+  additionalAssets?: number;
+  liabilities?: number;
 }
 
 export interface Expense {
@@ -35,10 +35,15 @@ export interface Investment {
   name: string;
   quantity: number;
   purchasePrice: number;
-  currentPrice: number;
+  currentPrice?: number;
   purchaseDate: Date;
-  platform: string;
-  type: 'stock' | 'etf' | 'mutual_fund' | 'crypto' | 'bond';
+  exchange?: string;
+  notes?: string;
+  type: 'stocks' | 'crypto' | 'bonds' | 'etf' | 'mutual_fund';
+  currentValue?: number;
+  totalReturn?: number;
+  returnPercentage?: number;
+  isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -51,8 +56,28 @@ export interface FinancialGoal {
   targetAmount: number;
   currentAmount: number;
   targetDate: Date;
-  category: 'emergency_fund' | 'retirement' | 'house' | 'education' | 'vacation' | 'other';
+  category: string;
   priority: 'low' | 'medium' | 'high';
+  progress?: number;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Budget {
+  id: string;
+  userId: string;
+  category: string;
+  amount: number;
+  period: 'weekly' | 'monthly' | 'yearly';
+  startDate: Date;
+  endDate: Date;
+  alertThreshold: number;
+  spentAmount?: number;
+  remainingAmount?: number;
+  spentPercentage?: number;
+  isOverBudget?: boolean;
+  isNearAlert?: boolean;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -61,32 +86,62 @@ export interface FinancialGoal {
 export interface AIRecommendation {
   id: string;
   userId: string;
-  type: 'investment' | 'expense_optimization' | 'goal_adjustment' | 'budget_alert';
+  type: string;
   title: string;
   description: string;
-  confidence: number; // 0-1
   priority: 'low' | 'medium' | 'high';
-  actionRequired: boolean;
-  data?: any; // Additional recommendation data
+  category: string;
+  actionable: boolean;
+  suggestedAction?: string;
   isRead: boolean;
-  isImplemented: boolean;
-  expiresAt?: Date;
-  createdAt: Date;
-}
-
-export interface Budget {
-  id: string;
-  userId: string;
-  month: string; // YYYY-MM format
-  categories: {
-    [category: string]: {
-      budgeted: number;
-      spent: number;
-      remaining: number;
-    };
-  };
-  totalBudgeted: number;
-  totalSpent: number;
+  readAt?: Date;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface MarketData {
+  symbol: string;
+  name: string;
+  price: number;
+  change: number;
+  changePercent: number;
+  volume?: number;
+  marketCap?: number;
+  pe?: number;
+  dividend?: number;
+  currency?: string;
+  exchange?: string;
+}
+
+export interface PortfolioSummary {
+  totalCurrentValue: number;
+  totalInvested: number;
+  totalReturn: number;
+  returnPercentage: number;
+  byType: { [key: string]: {
+    count: number;
+    invested: number;
+    currentValue: number;
+    return: number;
+    returnPercent: number;
+  }};
+}
+
+export interface FinancialHealth {
+  healthScore: number;
+  healthStatus: 'excellent' | 'good' | 'fair' | 'poor';
+  healthMessage: string;
+  metrics: {
+    savingsRate: number;
+    expenseRatio: number;
+    emergencyFundMonths: number;
+    investmentCount: number;
+    investmentTypes: number;
+  };
+  factors: Array<{
+    factor: string;
+    points: number;
+    status: 'excellent' | 'good' | 'fair' | 'poor';
+  }>;
+  recommendations: string[];
 }
